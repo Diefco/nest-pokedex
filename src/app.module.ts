@@ -5,15 +5,22 @@ import { PokemonModule } from './pokemon/pokemon.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CommonModule } from './common/common.module';
 import { SeedModule } from './seed/seed.module';
+import { ConfigModule } from '@nestjs/config';
+import { EnvConfiguration } from './config/app.config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      load: [EnvConfiguration], // opcional, para app.config.ts
+    }), // config para obtener .env. Es importante ponerlo lo más arriba posible.
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
       renderPath: '/',
     }),
-    MongooseModule.forRoot('mongodb://localhost:27017/nest-pokemon'), // npm i @nestjs/mongoose mongoose
-    PokemonModule, CommonModule, SeedModule,
+    MongooseModule.forRoot(process.env.MONGODB), // npm i @nestjs/mongoose mongoose
+    PokemonModule,
+    CommonModule,
+    SeedModule,
   ],
 })
 export class AppModule {}
